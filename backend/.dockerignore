@@ -1,0 +1,11 @@
+node_modules
+dist
+npm-cache
+.npm
+.git
+.gitignore
+.DS_Store
+.env
+.env.*
+tests
+coverage

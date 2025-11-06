@@ -2,7 +2,8 @@ import "dotenv/config";
 import mongoose from "mongoose";
 import { createApp } from "./app.js";
 
-// Prefer localhost; if it fails, we will fall back to an in-memory Mongo
+// Prefer localhost in dev; when MONGO_URI is provided (e.g. Docker/Render),
+// we will keep retrying to connect instead of falling back to in-memory.
 const DEFAULT_URI = "mongodb://127.0.0.1:27017/backoffice_user_manager";
 const MONGO_URI = process.env.MONGO_URI || DEFAULT_URI;
 const PORT = process.env.PORT || 4000;
@@ -12,25 +13,40 @@ async function tryConnect(uri: string) {
 }
 
 async function ensureMongoConnection() {
-  try {
-    console.log(`[backend] Connecting to Mongo at ${MONGO_URI}`);
-    await tryConnect(MONGO_URI);
-    console.log("[backend] Connected to Mongo");
-    // If using a dedicated E2E database, drop it on startup to keep tests isolated
-    if (/_e2e/i.test(MONGO_URI)) {
-      const db = mongoose.connection.db;
-      if (db) {
-        await db.dropDatabase();
-        console.log("[backend] E2E database dropped at startup");
+  const explicitUriProvided = !!process.env.MONGO_URI;
+  const maxAttempts = explicitUriProvided ? 20 : 1; // ~20*1s = ~20s
+  let attempt = 0;
+  while (attempt < maxAttempts) {
+    attempt++;
+    try {
+      console.log(`[backend] Connecting to Mongo (attempt ${attempt}) at ${MONGO_URI}`);
+      await tryConnect(MONGO_URI);
+      console.log("[backend] Connected to Mongo");
+      if (/_e2e/i.test(MONGO_URI)) {
+        const db = mongoose.connection.db;
+        if (db) {
+          await db.dropDatabase();
+          console.log("[backend] E2E database dropped at startup");
+        }
       }
+      return;
+    } catch (err) {
+      if (attempt < maxAttempts) {
+        await new Promise((r) => setTimeout(r, 1000));
+        continue;
+      }
+      if (explicitUriProvided) {
+        console.error("[backend] Could not connect to provided MONGO_URI. Exiting.", err);
+        throw err;
+      }
+      console.warn("[backend] Primary Mongo connection failed. Falling back to in-memory server.");
+      const { MongoMemoryServer } = await import("mongodb-memory-server");
+      const mem = await MongoMemoryServer.create();
+      const uri = mem.getUri();
+      console.log(`[backend] In-memory Mongo started at ${uri}`);
+      await tryConnect(uri);
+      return;
     }
-  } catch (err) {
-    console.warn("[backend] Primary Mongo connection failed. Falling back to in-memory server.");
-    const { MongoMemoryServer } = await import("mongodb-memory-server");
-    const mem = await MongoMemoryServer.create();
-    const uri = mem.getUri();
-    console.log(`[backend] In-memory Mongo started at ${uri}`);
-    await tryConnect(uri);
   }
 }
 

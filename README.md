@@ -1,8 +1,8 @@
 # Back‑office User Management System
 
-Live demo: https://coding-challenge-user-manage-web.vercel.app
-
 Full‑stack solution for the Coding challenge. Implements user/session APIs, a React (NextJS) dashboard, theme toggle, and automated tests.
+
+Live demo: https://coding-challenge-user-manage-web.vercel.app
 
 ![App Screenshot](./screenshot.png)
 
