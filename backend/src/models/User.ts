@@ -10,7 +10,16 @@ const UserSchema = new Schema({
   logins:    { type: Number, default: 0 },
   createdAt: { type: Date, default: () => new Date(), immutable: true },
   updatedAt: { type: Date, default: () => new Date() }
-}, { versionKey: false });
+}, {
+  versionKey: false,
+  toJSON: {
+    transform(_doc, ret) {
+      // Ensure hashed password is never exposed in API responses
+      delete (ret as any).passwordHash;
+      return ret;
+    }
+  }
+});
 
 UserSchema.pre("save", function(next) {
   this.set("updatedAt", new Date());

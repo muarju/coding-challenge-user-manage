@@ -146,6 +146,7 @@ Headers
 User model fields
 
 - `_id, firstName, lastName, status: 'active'|'inactive', logins, createdAt, updatedAt`
+- Stored only (never returned by API): `passwordHash`
 
 ---
 
