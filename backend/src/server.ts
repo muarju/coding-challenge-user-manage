@@ -18,8 +18,11 @@ async function ensureMongoConnection() {
     console.log("[backend] Connected to Mongo");
     // If using a dedicated E2E database, drop it on startup to keep tests isolated
     if (/_e2e/i.test(MONGO_URI)) {
-      await mongoose.connection.db.dropDatabase();
-      console.log("[backend] E2E database dropped at startup");
+      const db = mongoose.connection.db;
+      if (db) {
+        await db.dropDatabase();
+        console.log("[backend] E2E database dropped at startup");
+      }
     }
   } catch (err) {
     console.warn("[backend] Primary Mongo connection failed. Falling back to in-memory server.");
