@@ -1,7 +1,7 @@
 import { Router } from "express";
-import { createUserDto, updateUserDto } from "../services/validations";
-import { createUser, updateUserDomainAware } from "../services/userService";
-import User from "../models/User";
+import { createUserDto, updateUserDto } from "../services/validations.js";
+import { createUser, updateUserDomainAware } from "../services/userService.js";
+import User from "../models/User.js";
 
 const r = Router();
 

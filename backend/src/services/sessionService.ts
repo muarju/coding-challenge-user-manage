@@ -1,5 +1,5 @@
-import Session from "../models/Session";
-import User from "../models/User";
+import Session from "../models/Session.js";
+import User from "../models/User.js";
 
 export async function createSessionForUser(userId: string) {
   const user = await User.findById(userId);

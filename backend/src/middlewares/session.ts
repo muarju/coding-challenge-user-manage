@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import Session from "../models/Session";
+import Session from "../models/Session.js";
 
 export async function requireSession(req: Request, res: Response, next: NextFunction) {
   const sessionId = req.header("x-session-id");

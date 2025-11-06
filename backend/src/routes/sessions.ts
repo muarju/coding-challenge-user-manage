@@ -1,9 +1,9 @@
 import { Router } from "express";
-import { authDto } from "../services/validations";
-import User from "../models/User";
+import { authDto } from "../services/validations.js";
+import User from "../models/User.js";
 import bcrypt from "bcryptjs";
-import { createSessionForUser, terminateSession } from "../services/sessionService";
-import Session from "../models/Session";
+import { createSessionForUser, terminateSession } from "../services/sessionService.js";
+import Session from "../models/Session.js";
 
 const r = Router();
 
