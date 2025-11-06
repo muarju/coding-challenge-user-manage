@@ -29,6 +29,7 @@ type User = {
 
 export default function Dashboard() {
   const router = useRouter();
+  const [authorized, setAuthorized] = useState(false);
   const [users, setUsers] = useState<User[]>([]);
   const [page, setPage] = useState(1);
   const [pages, setPages] = useState(1);
@@ -41,7 +42,12 @@ export default function Dashboard() {
   const [notice, setNotice] = useState<string | null>(null);
 
   useEffect(() => {
-    if (!getSessionId()) router.replace("/signin");
+    const sid = getSessionId();
+    if (!sid) {
+      router.replace("/signin");
+      return;
+    }
+    setAuthorized(true);
   }, [router]);
 
   async function load(p = 1) {
@@ -51,8 +57,10 @@ export default function Dashboard() {
     setPage(res.data.page);
   }
   useEffect(() => {
-    load(1);
-  }, []);
+    if (authorized) {
+      load(1);
+    }
+  }, [authorized]);
 
   async function createUser() {
     await api.post("/users", {
@@ -119,6 +127,8 @@ export default function Dashboard() {
       />
     </Pagination>
   );
+
+  if (!authorized) return null;
 
   return (
     <>
