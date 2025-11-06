@@ -15,6 +15,7 @@ import {
   Pagination,
   Badge,
 } from "react-bootstrap";
+import ThemeToggle from "@/components/ThemeToggle";
 
 type User = {
   _id: string;
@@ -124,6 +125,9 @@ export default function Dashboard() {
       <Navbar className="mb-3 px-3 app-navbar">
         <Navbar.Brand>User Management</Navbar.Brand>
         <div className="ms-auto d-flex gap-2">
+          <div className="ms-auto">
+            <ThemeToggle />
+          </div>
           <Button variant="outline-danger" onClick={logout}>
             Log Out
           </Button>

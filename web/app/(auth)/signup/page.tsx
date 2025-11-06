@@ -14,6 +14,7 @@ import {
   Button,
   Navbar,
 } from "react-bootstrap";
+import ThemeToggle from "@/components/ThemeToggle";
 
 type FormData = {
   firstName: string;
@@ -66,6 +67,9 @@ export default function SignUp() {
     <>
       <Navbar className="mb-3 px-3 app-navbar">
         <Navbar.Brand>User Management</Navbar.Brand>
+        <div className="ms-auto">
+          <ThemeToggle />
+        </div>
       </Navbar>
       <Container className="min-vh-100 d-flex align-items-center">
         <Row className="justify-content-center w-100">
