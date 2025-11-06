@@ -1,16 +1,16 @@
 import express from "express";
-import cors from "cors";
+import cors, { CorsOptions } from "cors";
 import morgan from "morgan";
 import users from "./routes/users.js";
 import sessions from "./routes/sessions.js";
 
 export const createApp = () => {
   const app = express();
-  const corsOptions = {
+  const corsOptions: CorsOptions = {
     origin: "*",
     methods: ["GET","POST","PATCH","DELETE","OPTIONS"],
-    allowedHeaders: ["Content-Type","x-session-id"]
-  } as const;
+    allowedHeaders: ["Content-Type","x-session-id"],
+  };
   app.use(cors(corsOptions));
   app.options("*", cors(corsOptions));
   app.use(express.json());
